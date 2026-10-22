@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ôn Luyện Khoa Học Quản Lý Đại Cương - Chương 1 đến 4</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#4f46e5',
+              600: '#4338ca',
+              700: '#3730a3',
+              800: '#312e81',
+              900: '#1e1b4b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.5); }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .custom-ring {
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center shadow-md">
+          <i data-lucide="award" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">
+            Khoa Học Quản Lý Đại Cương
+          </h1>
+          <p class="text-xs text-slate-500 hidden sm:block">Chương 1 (Slide 7-60) • Chương 2 (Slide 61-96) • Chương 3 (Slide 97-149) • Chương 4 (Slide 150-168)</p>
+        </div>
+      </div>
+
+      <!-- Header actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Timer (Thi thử) -->
+        <div id="timerContainer" class="hidden flex items-center px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-sm font-semibold">
+          <i data-lucide="clock" class="w-4 h-4 mr-1.5 animate-pulse"></i>
+          <span id="timerDisplay">45:00</span>
+        </div>
+
+        <!-- Mode selector -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+          <button id="btnModeStudy" onclick="setMode('study')" class="px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1">
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline">Luyện tập</span>
+          </button>
+          <button id="btnModeExam" onclick="setMode('exam')" class="px-2.5 py-1.5 rounded-lg transition-all flex items-center space-x-1">
+            <i data-lucide="timer" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline">Thi thử</span>
+          </button>
+        </div>
+
+        <!-- Action: Phân tích điểm mạnh/yếu -->
+        <button onclick="openAnalyticsModal()" class="px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5" title="Xem phân tích năng lực chi tiết">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Đánh giá Năng lực</span>
+        </button>
+
+        <!-- Nộp bài -->
+        <button onclick="confirmSubmitExam()" class="bg-brand-600 hover:bg-brand-700 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow hover:shadow-md transition flex items-center space-x-1.5">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Nộp bài</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
+
+    <!-- LEFT / QUESTION CONTENT AREA -->
+    <div class="flex-1 flex flex-col space-y-4">
+      
+      <!-- TOOLBAR: CHỌN CHƯƠNG, BỘ LỌC, PHA TRỘN, LÀM LẠI -->
+      <div class="glass-card rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+        <!-- Chapter selection -->
+        <div class="flex items-center space-x-2 w-full md:w-auto flex-wrap gap-y-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Phạm vi:</span>
+          <select id="chapterFilter" onchange="onChapterChange()" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+            <option value="all">Tất cả các chương (C1 -> C4)</option>
+            <option value="1">Chương 1: Nhập môn KHQL (Slide 7-60)</option>
+            <option value="2">Chương 2: Nguyên tắc & Phương pháp (Slide 61-96)</option>
+            <option value="3">Chương 3: Kế hoạch & Quyết định (Slide 97-149)</option>
+            <option value="4">Chương 4: Chức năng tổ chức (Slide 150-168)</option>
+            <option value="theory">Chỉ câu Lý thuyết (50%)</option>
+            <option value="practice">Chỉ tình huống Thực tế (50%)</option>
+            <option value="bookmarked">⭐ Câu hỏi đã đánh dấu</option>
+          </select>
+        </div>
+
+        <!-- Controls: Trộn câu hỏi, Làm lại -->
+        <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+          <button onclick="shuffleQuestions()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition flex items-center space-x-1" title="Xáo trộn ngẫu nhiên thứ tự câu hỏi và đáp án">
+            <i data-lucide="shuffle" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Pha trộn (Shuffle)</span>
+          </button>
+          <button onclick="resetCurrentProgress()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 text-rose-600 text-xs font-semibold shadow-sm transition flex items-center space-x-1" title="Xóa toàn bộ câu trả lời để làm lại từ đầu">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Làm lại (Reset)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PROGRESS SUMMARY BAR -->
+      <div class="flex items-center justify-between px-2 text-xs font-medium text-slate-500">
+        <div>
+          Đã trả lời: <span id="answeredCount" class="font-bold text-brand-600">0</span>/<span id="totalVisibleCount">0</span> câu
+        </div>
+        <div class="w-48 bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div id="progressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- QUESTION DISPLAY CARD -->
+      <div id="questionContainer" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex-1 flex flex-col justify-between relative transition-all">
+        <div>
+          <!-- Card Header Info -->
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+              <span id="badgeQuestionNumber" class="px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200">
+                Câu 1 / 100
+              </span>
+              <span id="badgeChapter" class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                Chương 1
+              </span>
+              <span id="badgeType" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Lý thuyết
+              </span>
+              <span id="badgeTopic" class="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                Chủ đề
+              </span>
+            </div>
+
+            <!-- Bookmark Button -->
+            <button id="btnBookmark" onclick="toggleBookmarkCurrent()" class="p-2 rounded-xl text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition flex items-center space-x-1" title="Đánh dấu câu hỏi cần xem lại">
+              <i data-lucide="star" id="iconBookmark" class="w-5 h-5"></i>
+              <span class="text-xs font-medium hidden sm:inline">Lưu câu này</span>
+            </button>
+          </div>
+
+          <!-- Question Prompt -->
+          <div class="mb-6">
+            <h2 id="questionText" class="text-lg sm:text-xl font-semibold text-slate-900 leading-relaxed">
+              Đang tải dữ liệu câu hỏi...
+            </h2>
+          </div>
+
+          <!-- Options List (A, B, C, D) -->
+          <div id="optionsContainer" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Explanation Box -->
+          <div id="explanationBox" class="hidden mt-6 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-slate-700 text-sm">
+            <div class="flex items-center space-x-2 font-semibold text-indigo-900 mb-1">
+              <i data-lucide="lightbulb" class="w-4 h-4 text-indigo-600"></i>
+              <span>Giải thích đáp án & Căn cứ Slide tài liệu:</span>
+            </div>
+            <p id="explanationText" class="leading-relaxed pl-6 text-slate-700 text-xs sm:text-sm">
+              <!-- Explanation content -->
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="pt-6 flex items-center justify-between border-t border-slate-100 mt-6">
+          <button id="btnPrev" onclick="navigateQuestion(-1)" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition flex items-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            <span>Câu trước</span>
+          </button>
+
+          <button onclick="clearCurrentAnswer()" class="text-xs text-slate-400 hover:text-slate-600 px-3 py-2 rounded-lg hover:bg-slate-100 transition hidden sm:inline-block">
+            Bỏ chọn
+          </button>
+
+          <button id="btnNext" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 shadow-sm hover:shadow transition flex items-center space-x-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+            <span>Câu tiếp</span>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR: QUESTION MATRIX & ANALYTICS PREVIEW -->
+    <aside class="w-full lg:w-80 flex flex-col space-y-4">
+
+      <!-- Status Legend -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">Chú thích trạng thái</h3>
+        <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-md bg-brand-600 inline-block"></span>
+            <span>Đã trả lời</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-md bg-slate-100 border border-slate-300 inline-block"></span>
+            <span>Chưa làm</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-md bg-amber-400 inline-block"></span>
+            <span>Đã đánh dấu (⭐)</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-md ring-2 ring-brand-500 bg-white inline-block"></span>
+            <span>Đang chọn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Matrix Grid -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Danh sách câu hỏi</h3>
+          <span id="matrixCount" class="text-xs font-medium text-slate-400">0 câu</span>
+        </div>
+        
+        <div class="overflow-y-auto max-h-[360px] pr-1">
+          <div id="questionMatrix" class="grid grid-cols-5 gap-2">
+            <!-- Matrix Buttons via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick evaluation preview box -->
+      <div class="bg-gradient-to-br from-indigo-50 to-brand-50 rounded-2xl p-4 border border-indigo-100 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-indigo-900 uppercase">Tiến độ & Hiệu quả</span>
+          <i data-lucide="trending-up" class="w-4 h-4 text-indigo-600"></i>
+        </div>
+        <p class="text-xs text-slate-600 mb-3">Hệ thống tự động theo dõi từng chuyên đề bạn làm đúng hoặc sai.</p>
+        <button onclick="openAnalyticsModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition">
+          Xem Báo Cáo Điểm Mạnh / Yếu
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- MODAL: RESULT SUMMARY MODAL -->
+  <div id="resultModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center">
+            <i data-lucide="award" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Kết Quả Bài Thi Thử</h3>
+        </div>
+        <button onclick="closeResultModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="py-6 flex flex-col sm:flex-row items-center justify-around gap-4 bg-slate-50 rounded-2xl my-4 p-4">
+        <div class="text-center">
+          <span class="text-xs text-slate-400 uppercase font-semibold">Điểm số (Thang 10)</span>
+          <div id="modalScore10" class="text-3xl sm:text-4xl font-extrabold text-brand-600 mt-1">0.0</div>
+        </div>
+        <div class="h-10 w-px bg-slate-200 hidden sm:block"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 uppercase font-semibold">Số câu đúng</span>
+          <div id="modalCorrectCount" class="text-3xl sm:text-4xl font-extrabold text-emerald-600 mt-1">0/0</div>
+        </div>
+        <div class="h-10 w-px bg-slate-200 hidden sm:block"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 uppercase font-semibold">Tỷ lệ chính xác</span>
+          <div id="modalAccuracy" class="text-3xl sm:text-4xl font-extrabold text-indigo-600 mt-1">0%</div>
+        </div>
+      </div>
+
+      <p id="modalEvaluationMessage" class="text-sm text-center font-medium text-slate-600 mb-4 px-2"></p>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+        <button onclick="closeResultModal(); openAnalyticsModal();" class="px-5 py-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-sm font-semibold hover:bg-indigo-100 transition">
+          Xem Phân Tích Điểm Mạnh / Yếu
+        </button>
+        <button onclick="closeResultModal()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition">
+          Xem Lại Bài Thi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ĐÁNH GIÁ NĂNG LỰC - ĐIỂM MẠNH & ĐIỂM YẾU -->
+  <div id="analyticsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh] overflow-hidden">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Báo Cáo Đánh Giá Điểm Mạnh & Yếu</h3>
+            <p class="text-xs text-slate-500">Phân tích theo từng nhóm chủ đề và kiến nghị số trang slide cần đọc lại</p>
+          </div>
+        </div>
+        <button onclick="closeAnalyticsModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Body: Topic Breakdown -->
+      <div id="analyticsContent" class="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Footer -->
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+        <button onclick="closeAnalyticsModal()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition">
+          Đóng và Tiếp tục ôn tập
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT: NGÂN HÀNG CÂU HỎI & LOGIC TOÀN DIỆN -->
+  <script>
+    // =========================================================================
+    // NGÂN HÀNG CÂU HỎI CHUẨN 4 CHƯƠNG: 50% LÝ THUYẾT + 50% TÌNH HUỐNG THỰC TẾ
+    // Chương 1 (Slide 7-60) | Chương 2 (Slide 61-96) | Chương 3 (Slide 97-149) | Chương 4 (Slide 150-168)
+    // =========================================================================
+    const MASTER_QUESTIONS = [
+      // ---------- CHƯƠNG 1: NHẬP MÔN KHOA HỌC QUẢN LÝ (Slide 7 - 60) ----------
+      {
+        id: 1, chapter: 1, type: "theory", topic: "Bản chất & Khái niệm",
+        slideRef: "Slide 13, 27",
+        question: "Theo Harold Koontz, mục tiêu hàng đầu của mọi nhà quản lý khi tiến hành hoạt động quản lý là gì?",
+        options: [
+          "Tối đa hóa mức lợi nhuận cho cổ đông bất chấp chi phí phát sinh",
+          "Hình thành một môi trường mà trong đó con người có thể đạt được các mục đích của nhóm với thời gian, tiền bạc, vật chất và sự bất mãn cá nhân ít nhất",
+          "Thiết lập cơ chế kiểm tra giám sát hà khắc để buộc nhân viên phục tùng tuyệt đối",
+          "Loại bỏ hoàn toàn các yếu tố bất định từ môi trường vĩ mô bên ngoài"
+        ],
+        correct: 1,
+        explain: "Slide 13 nêu rõ định nghĩa của Harold Koontz: Mục tiêu của mọi nhà quản lý là hình thành môi trường con người đạt mục đích nhóm với thời gian, tiền bạc, vật chất và sự bất mãn cá nhân ít nhất."
+      },
+      {
+        id: 2, chapter: 1, type: "practice", topic: "Bản chất & Khái niệm",
+        slideRef: "Slide 15",
+        question: "[Tình huống] Giám đốc một bệnh viện công lập phát biểu: 'Chúng tôi nỗ lực tối ưu hóa mọi nguồn lực thuốc men, y bác sĩ nội bộ để đem lại tỷ lệ khỏi bệnh cao nhất cho bệnh nhân ngoài xã hội'. Nhận định này phản ánh trực tiếp quan điểm quản lý của học giả nào?",
+        options: [
+          "F.W. Taylor về quản lý định mức lao động",
+          "Henri Fayol về 14 nguyên tắc quản trị hành chính",
+          "Peter F. Drucker về việc quản lý phải xuất phát từ kết quả mong đợi và giúp tổ chức đạt được kết quả nằm ngoài tổ chức đó",
+          "Max Weber về bộ máy quan liêu chuẩn mực"
+        ],
+        correct: 2,
+        explain: "Slide 15 trích dẫn P.F. Drucker: Quản lý phải xuất phát từ kết quả mong đợi của tổ chức, động viên mọi nguồn lực để đạt được kết quả nằm ngoài tổ chức đó."
+      },
+      {
+        id: 3, chapter: 1, type: "theory", topic: "Các cách tiếp cận",
+        slideRef: "Slide 17, 19",
+        question: "Phương pháp tiếp cận theo điều kiện và tình huống (Contingency approach) trong nghiên cứu quản lý khẳng định nguyên lý cốt lõi nào?",
+        options: [
+          "Có một mô hình quản lý vạn năng tối ưu duy nhất áp dụng thành công cho mọi tổ chức",
+          "Tùy theo các điều kiện và tình huống khác nhau để lựa chọn cách quản lý khác nhau, không có cách quản lý chung duy nhất",
+          "Chỉ cần áp dụng toán học giải tích là giải quyết được mọi tranh chấp nội bộ",
+          "Nhà quản lý chỉ cần hành động theo trực giác cá nhân mà không cần tri thức khoa học"
+        ],
+        correct: 1,
+        explain: "Slide 19 chỉ rõ: Tiếp cận tình huống khẳng định tùy theo các điều kiện và tình huống khác nhau, lựa chọn cách quản lý khác nhau; không có cách quản lý chung cho tất cả."
+      },
+      {
+        id: 4, chapter: 1, type: "practice", topic: "Các cách tiếp cận",
+        slideRef: "Slide 21, 23",
+        question: "[Tình huống] Tại Công ty Công nghệ Alpha, ban giám đốc nhận thấy nhân viên IT làm việc căng thẳng, sáng tạo giảm sút. Thay vì phạt tiền đi muộn, ban lãnh đạo quyết định thiết kế lại không gian mở, tạo các góc cà phê giao lưu và tổ chức các buổi chia sẻ động viên tinh thần. Công ty đang vận dụng cách tiếp cận nào?",
+        options: [
+          "Tiếp cận toán học mô phỏng thuật toán",
+          "Tiếp cận tâm lý - xã hội và văn hóa quản lý",
+          "Tiếp cận kinh nghiệm thuần túy của Ch. Barnard",
+          "Tiếp cận cơ học cổ điển cưỡng chế"
+        ],
+        correct: 1,
+        explain: "Slide 21 & 23 trình bày tiếp cận tâm lý - xã hội (động cơ thúc đẩy, thỏa mãn tinh thần) và tiếp cận văn hóa quản lý (môi trường chia sẻ, giá trị con người)."
+      },
+      {
+        id: 5, chapter: 1, type: "theory", topic: "Phân biệt Quản lý & Lãnh đạo",
+        slideRef: "Slide 29, 31",
+        question: "Theo bài giảng, sự khác biệt then chốt giữa 'Lãnh đạo' (Leadership) và 'Quản lý' (Management) thể hiện ở điểm nào?",
+        options: [
+          "Lãnh đạo chú trọng duy trì sự ổn định, còn quản lý tập trung dẫn dắt sự thay đổi",
+          "Lãnh đạo thiên về tầm nhìn, định hướng sứ mệnh và tạo ra sự thay đổi; quản lý thiên về duy trì trật tự, ổn định và thực thi kế hoạch ngắn hạn",
+          "Quản lý chỉ có ở doanh nghiệp tư nhân, còn lãnh đạo chỉ tồn tại ở các cơ quan nhà nước",
+          "Không có bất kỳ sự khác biệt nào giữa hai khái niệm này"
+        ],
+        correct: 1,
+        explain: "Slide 29 nêu rõ sự khác biệt giữa Lãnh đạo và Quản lý: Tầm nhìn, quyết định sứ mệnh chiến lược, ổn định và thay đổi, tính dài hạn hay ngắn hạn."
+      },
+      {
+        id: 6, chapter: 1, type: "practice", topic: "Mô hình Kỹ năng Quản lý",
+        slideRef: "Slide 53",
+        question: "[Tình huống] Anh Hoàng vừa được bổ nhiệm từ vị trí Trưởng nhóm Kỹ thuật (lập trình viên chính) lên vị trí Giám đốc Chiến lược toàn công ty. Theo mô hình kỹ năng của Robert Katz, anh Hoàng cần thay đổi cơ cấu kỹ năng của mình như thế nào để thành công?",
+        options: [
+          "Tập trung sâu hơn nữa vào kỹ năng lập trình chi tiết, giảm bớt việc giao tiếp",
+          "Chuyển dịch trọng tâm từ kỹ năng chuyên môn kỹ thuật sang kỹ năng tư duy bao quát (nhận thức chiến lược)",
+          "Bỏ qua kỹ năng quan hệ con người vì ở cấp cao không cần làm việc với nhân viên",
+          "Chỉ cần kỹ năng kiểm quỹ tiền mặt mỗi ngày"
+        ],
+        correct: 1,
+        explain: "Slide 53 biểu diễn mô hình kỹ năng của Katz: Nhà quản lý cấp cao cần nhiều nhất Kỹ năng bao quát, trong khi kỹ năng chuyên môn giảm dần tỷ trọng so với cấp cơ sở."
+      },
+      {
+        id: 7, chapter: 1, type: "theory", topic: "Môi trường Quản lý",
+        slideRef: "Slide 38, 39, 44",
+        question: "Yếu tố nào sau đây thuộc về 'môi trường nội bộ bên trong' của tổ chức?",
+        options: [
+          "Sự thay đổi về lãi suất ngân hàng và chính sách thuế nhà nước",
+          "Văn hóa tổ chức, nguồn nhân lực và tiềm lực tài chính nội tại",
+          "Tốc độ phát triển công nghệ trí tuệ nhân tạo trên toàn cầu",
+          "Các rào cản hiệp định thương mại tự do quốc tế"
+        ],
+        correct: 1,
+        explain: "Slide 44 liệt kê các yếu tố môi trường nội bộ: Nguồn nhân lực, tài chính, cơ sở vật chất - kỹ thuật, văn hóa tổ chức, đội ngũ lãnh đạo/quản lý."
+      },
+      {
+        id: 8, chapter: 1, type: "practice", topic: "Môi trường Quản lý",
+        slideRef: "Slide 40, 43",
+        question: "[Tình huống] Nhà nước ban hành Luật Bảo vệ môi trường mới, quy định các nhà máy xi măng phải giảm 30% lượng phát thải khí CO2 nếu không sẽ bị đình chỉ hoạt động. Yếu tố này tác động đến doanh nghiệp xi măng thuộc nhóm môi trường nào?",
+        options: [
+          "Môi trường nội bộ bên trong doanh nghiệp",
+          "Môi trường chính trị và pháp luật thuộc môi trường vĩ mô bên ngoài",
+          "Môi trường giới tự nhiên thuần túy không có tính pháp lý",
+          "Môi trường công nghệ thông tin nội bộ"
+        ],
+        correct: 1,
+        explain: "Slide 39, 43: Hệ thống chính trị, pháp luật, chính sách, quy tắc thuộc Môi trường vĩ mô bên ngoài với tác động thúc đẩy, hạn chế hoặc điều chỉnh tổ chức."
+      },
+      {
+        id: 9, chapter: 1, type: "theory", topic: "Cấu trúc Đối tượng KHQL",
+        slideRef: "Slide 51, 52, 54, 55",
+        question: "Trong cấu trúc hệ thống đối tượng của Khoa học Quản lý, 'Khách thể quản lý' có đặc tính gì so với 'Đối tượng quản lý'?",
+        options: [
+          "Khách thể quản lý hoàn toàn nằm dưới quyền điều hành trực tiếp tuyệt đối của chủ thể quản lý",
+          "Khách thể quản lý vừa là đối tượng quản lý, vừa là các bên liên quan, chứa đựng nhiều yếu tố độc lập tương đối ngoài tầm kiểm soát của chủ thể",
+          "Khách thể quản lý chỉ bao gồm máy móc và công cụ, không có con người",
+          "Khách thể quản lý luôn là cấp trên của chủ thể quản lý"
+        ],
+        correct: 1,
+        explain: "Slide 55 chỉ rõ: Khách thể quản lý là bên đối diện với chủ thể, vừa là đối tượng vừa là các bên liên quan, bao gồm nhiều yếu tố không thuộc quyền kiểm soát của chủ thể."
+      },
+      {
+        id: 10, chapter: 1, type: "practice", topic: "Chủ thể & Đối tượng",
+        slideRef: "Slide 52, 53",
+        question: "[Tình huống] Trong một trường Đại học, Hiệu trưởng ban hành quy định về chuẩn đầu ra ngoại ngữ áp dụng cho toàn bộ sinh viên khóa mới. Trong mối quan hệ quản lý này, chủ thể quản lý và đối tượng quản lý lần lượt là ai?",
+        options: [
+          "Chủ thể: Toàn thể sinh viên; Đối tượng: Hiệu trưởng nhà trường",
+          "Chủ thể: Hiệu trưởng (người tạo ra tác động quản lý có thẩm quyền); Đối tượng: Sinh viên khóa mới (bên tiếp nhận tác động)",
+          "Chủ thể: Bộ Giáo dục; Đối tượng: Các giảng viên dạy ngoại ngữ",
+          "Cả hai bên đều là khách thể độc lập không có quan hệ quản lý"
+        ],
+        correct: 1,
+        explain: "Slide 52 & 54: Chủ thể quản lý là nhân tố tạo ra tác động quản lý có thẩm quyền (Hiệu trưởng); Đối tượng quản lý là bên tiếp nhận tác động (sinh viên)."
+      },
+
+      // ---------- CHƯƠNG 2: NGUYÊN TẮC VÀ PHƯƠNG PHÁP QUẢN LÝ (Slide 61 - 96) ----------
+      {
+        id: 11, chapter: 2, type: "theory", topic: "Nguyên tắc quản lý",
+        slideRef: "Slide 63, 64",
+        question: "Nguyên tắc quản lý được định nghĩa là gì?",
+        options: [
+          "Ý chí chủ quan và thói quen sở thích của người đứng đầu tổ chức",
+          "Các quy định có tính chuẩn mực, phản ánh quy luật khách quan trong thực tiễn quản lý, chỉ đạo hành vi của chủ thể quản lý ở các cấp",
+          "Những lời khuyên đạo đức không có tính bắt buộc thi hành",
+          "Các thủ tục kế toán chi tiết do nhân viên thu ngân tự đặt ra"
+        ],
+        correct: 1,
+        explain: "Slide 63: Nguyên tắc quản lý là các quy định có tính chuẩn mực, phản ánh quy luật khách quan trong thực tiễn quản lý, chỉ đạo hành vi của chủ thể quản lý."
+      },
+      {
+        id: 12, chapter: 2, type: "practice", topic: "Nguyên tắc quản lý",
+        slideRef: "Slide 75",
+        question: "[Tình huống] Trước khi ban hành chiến lược kinh doanh năm mới, Tổng giám đốc tổ chức hội nghị lắng nghe ý kiến đóng góp của toàn thể trưởng bộ phận và đại diện nhân viên. Sau khi tổng hợp, Tổng giám đốc đưa ra quyết định cuối cùng mang tính thống nhất bắt buộc toàn công ty thực hiện nghiêm túc. Tổng giám đốc đã vận dụng nguyên tắc nào?",
+        options: [
+          "Nguyên tắc Chuyên quyền độc đoán",
+          "Nguyên tắc Tập trung - dân chủ",
+          "Nguyên tắc Tự do tuyệt đối",
+          "Nguyên tắc Phân chia quyền lực khép kín"
+        ],
+        correct: 1,
+        explain: "Slide 75: Nguyên tắc Tập trung - dân chủ đòi hỏi vừa nâng cao năng lực chỉ huy thống nhất, vừa phát huy trí tuệ tập thể."
+      },
+      {
+        id: 13, chapter: 2, type: "theory", topic: "Đặc điểm nguyên tắc quản lý",
+        slideRef: "Slide 66",
+        question: "Tại sao nguyên tắc quản lý thường có hiện tượng 'lạc hậu' hơn so với sự biến đổi của thực tiễn quản lý?",
+        options: [
+          "Vì nhà quản lý không quan tâm đến sự phát triển của công nghệ",
+          "Vì thực tiễn quản lý luôn vận động và biến đổi nhanh chóng, trong khi nguyên tắc cần thời gian kiểm nghiệm, đúc kết và có tính ổn định tương đối",
+          "Vì nguyên tắc quản lý được sao chép hoàn toàn từ nước ngoài",
+          "Vì các quy luật xã hội không bao giờ thay đổi"
+        ],
+        correct: 1,
+        explain: "Slide 66: Đặc điểm 3 của NTQL là thường 'lạc hậu' hơn thực tiễn do tính định hình, ổn định và hiện tượng bảo thủ so với sự thay đổi liên tục của thực tế."
+      },
+      {
+        id: 14, chapter: 2, type: "practice", topic: "Nguyên tắc quản lý",
+        slideRef: "Slide 76",
+        question: "[Tình huống] Trưởng phòng Kinh doanh giao cho chuyên viên Nam nhiệm vụ đàm phán hợp đồng cung ứng trị giá 5 tỷ đồng, nhưng lại không cấp cho Nam quyền quyết định mức chiết khấu giá trong biên độ cho phép, khiến Nam phải xin ý kiến từng câu chữ và tuột mất cơ hội ký kết. Việc này đã vi phạm nguyên tắc quản lý nào?",
+        options: [
+          "Nguyên tắc Tuân thủ quy trình",
+          "Nguyên tắc Quyền hạn tương xứng với trách nhiệm",
+          "Nguyên tắc Tiết kiệm và hiệu quả",
+          "Nguyên tắc Kết hợp các nguồn lực"
+        ],
+        correct: 1,
+        explain: "Slide 76: Nguyên tắc Quyền hạn tương xứng với trách nhiệm yêu cầu khi giao trách nhiệm phải trao đủ quyền hạn cần thiết để hoàn thành công việc."
+      },
+      {
+        id: 15, chapter: 2, type: "theory", topic: "Phương pháp quản lý",
+        slideRef: "Slide 82, 86",
+        question: "Phương pháp quản lý nào tác động gián tiếp lên hành vi của đối tượng thông qua việc sử dụng các đòn bẩy kinh tế (tiền lương, thưởng, phạt vật chất)?",
+        options: [
+          "Phương pháp hành chính",
+          "Phương pháp kinh tế",
+          "Phương pháp giáo dục",
+          "Phương pháp tâm lý"
+        ],
+        correct: 1,
+        explain: "Slide 86, 92: Phương pháp kinh tế là phương pháp tác động thông qua các lợi ích vật chất để kích thích tính tự giác và hiệu quả làm việc."
+      },
+      {
+        id: 16, chapter: 2, type: "practice", topic: "Phương pháp quản lý",
+        slideRef: "Slide 86, 93",
+        question: "[Tình huống] Xưởng trưởng ban hành lệnh bằng văn bản: 'Nghiêm cấm hút thuốc trong kho chứa cồn sát khuẩn, ai vi phạm sẽ bị đình chỉ công tác ngay lập tức không xét lý do'. Đây là biểu hiện cụ thể của phương pháp quản lý nào?",
+        options: [
+          "Phương pháp tâm lý thuyết phục",
+          "Phương pháp hành chính mang tính quyền lực bắt buộc",
+          "Phương pháp kinh tế đàm phán",
+          "Phương pháp giáo dục đạo đức"
+        ],
+        correct: 1,
+        explain: "Slide 86, 93: Phương pháp hành chính tác động trực tiếp bằng quyền lực pháp lý, các mệnh lệnh, quy chế bắt buộc có tính kỷ luật cao."
+      },
+      {
+        id: 17, chapter: 2, type: "theory", topic: "Phương pháp quản lý",
+        slideRef: "Slide 94, 95",
+        question: "Ưu điểm nổi bật nhất của phương pháp tâm lý trong quản lý là gì?",
+        options: [
+          "Buộc cấp dưới phải phục tùng tức thì mà không cần giải thích",
+          "Khai thác và khơi dậy tiềm năng tinh thần, sự tự hào, lòng tự trọng và tinh thần hăng say làm việc tự giác của con người",
+          "Tiết kiệm 100% ngân sách trả lương cho nhân viên",
+          "Thay thế hoàn toàn sự cần thiết của hệ thống pháp luật"
+        ],
+        correct: 1,
+        explain: "Slide 94: Phương pháp tâm lý tác động vào tình cảm, tâm tư, danh dự giúp nhân viên giải tỏa ức chế, tăng cường đoàn kết và tự giác cống hiến."
+      },
+      {
+        id: 18, chapter: 2, type: "practice", topic: "Phương pháp quản lý",
+        slideRef: "Slide 83, 91",
+        question: "[Tình huống] Đội cứu hộ động đất tiếp cận hiện trường nhà sập nguy hiểm. Chỉ huy đội phát lệnh dứt khoát: 'Toàn đội di chuyển theo hướng B, không ai được tự ý tách hàng!'. Trong hoàn cảnh nguy cấp này, người chỉ huy đã vận dụng phương pháp quản lý bằng quyền lực nào là phù hợp nhất?",
+        options: [
+          "Phương pháp tự do (mọi người tùy nghi chọn cách làm)",
+          "Phương pháp chuyên quyền (chỉ đạo dứt khoát, tập trung quyền lực xử lý khủng hoảng)",
+          "Phương pháp hội thảo dân chủ bỏ phiếu",
+          "Phương pháp giáo dục cảm hóa"
+        ],
+        correct: 1,
+        explain: "Slide 89, 91: Trong điều kiện môi trường rủi ro, khủng hoảng, khẩn cấp thì phong cách chuyên quyền chỉ đạo tập trung là tất yếu và mang lại hiệu quả cứu sinh mạng."
+      },
+      {
+        id: 19, chapter: 2, type: "theory", topic: "Nguyên tắc quản lý",
+        slideRef: "Slide 80",
+        question: "Nguyên tắc 'Tiết kiệm và hiệu quả' trong công tác quản lý yêu cầu chủ thể quản lý phải làm gì?",
+        options: [
+          "Cắt giảm mọi chi tiêu đến mức làm ngưng trệ các hoạt động cốt lõi",
+          "Giảm thiểu tối đa các chi phí đầu vào và tối đa hóa kết quả đầu ra có chất lượng của tổ chức",
+          "Chi tiêu ngân sách càng nhanh càng chứng tỏ năng lực quản lý tốt",
+          "Chỉ quan tâm đến lợi ích ngắn hạn trước mắt"
+        ],
+        correct: 1,
+        explain: "Slide 80: Nguyên tắc Tiết kiệm và hiệu quả đòi hỏi: Giảm thiểu tối đa chi phí đầu vào, tối đa hóa kết quả đầu ra, thể hiện tính hiệu quả trong công tác."
+      },
+      {
+        id: 20, chapter: 2, type: "practice", topic: "Kết hợp phương pháp",
+        slideRef: "Slide 83",
+        question: "[Tình huống] Một doanh nghiệp vừa ban hành quy chế thưởng năng suất (tiền thưởng theo sản phẩm), vừa bổ sung nội quy xử phạt đi muộn (hành chính), đồng thời tổ chức tuyên dương tấm gương lao động tiêu biểu hàng tháng (tâm lý). Cách làm này phản ánh đặc trưng nào của phương pháp quản lý?",
+        options: [
+          "Sự thiếu nhất quán và lúng túng của ban lãnh đạo",
+          "Sự phối hợp tổng thể các công cụ và phương pháp quản lý tác động đa chiều lên con người để đạt hiệu quả cao nhất",
+          "Chỉ áp dụng được trong các cơ quan phi lợi nhuận",
+          "Vi phạm quy định của Bộ luật Lao động"
+        ],
+        correct: 1,
+        explain: "Slide 83: Phương pháp quản lý tác động trực tiếp lên con người; tùy đặc điểm đối tượng và hoàn cảnh, việc kết hợp linh hoạt các công cụ thể hiện năng lực nghệ thuật của nhà quản lý."
+      },
+
+      // ---------- CHƯƠNG 3: LẬP KẾ HOẠCH VÀ RA QUYẾT ĐỊNH (Slide 97 - 149) ----------
+      {
+        id: 21, chapter: 3, type: "theory", topic: "Khái niệm Kế hoạch",
+        slideRef: "Slide 99, 107",
+        question: "Lập kế hoạch được coi là chức năng có vị trí như thế nào trong tiến trình quản lý?",
+        options: [
+          "Là chức năng kết thúc của quy trình quản lý",
+          "Là chức năng cơ bản, tiên quyết và định hướng cho toàn bộ các chức năng khác",
+          "Là công việc tùy chọn chỉ thực hiện khi có nguồn kinh phí dồi dào",
+          "Chỉ thực hiện sau khi đã hoàn thành xong công tác kiểm tra"
+        ],
+        correct: 1,
+        explain: "Slide 107: Lập kế hoạch là chức năng cơ bản, tiên quyết của quá trình quản lý (tìm kiếm tương lai, xây dựng chương trình hành động)."
+      },
+      {
+        id: 22, chapter: 3, type: "practice", topic: "Đặc điểm Kế hoạch",
+        slideRef: "Slide 100",
+        question: "[Tình huống] Giám đốc một chuỗi nhà hàng xây dựng kế hoạch mở rộng 10 chi nhánh mới. Tuy nhiên, khi dịch bệnh bùng phát, ông đã nhanh chóng điều chỉnh kế hoạch sang tập trung phát triển mảng giao đồ ăn online (Take-away) để bảo toàn dòng tiền. Việc làm này thể hiện đặc điểm nào của kế hoạch?",
+        options: [
+          "Tính cứng nhắc bắt buộc",
+          "Tính linh hoạt (thích ứng với biến động môi trường)",
+          "Tính chủ quan duy ý chí",
+          "Tính bảo thủ không nhất quán"
+        ],
+        correct: 1,
+        explain: "Slide 100: Kế hoạch có đặc điểm tính ổn định song hành với tính linh hoạt để kịp thời điều chỉnh phương án khi môi trường thay đổi."
+      },
+      {
+        id: 23, chapter: 3, type: "theory", topic: "Phân loại Kế hoạch",
+        slideRef: "Slide 102",
+        question: "Căn cứ vào cấp kế hoạch, kế hoạch chiến lược khác với kế hoạch tác nghiệp ở những đặc trưng nào?",
+        options: [
+          "Kế hoạch chiến lược ngắn hạn, hẹp và chi tiết; kế hoạch tác nghiệp dài hạn, rộng và cô đọng",
+          "Kế hoạch chiến lược dài hạn, phạm vi rộng, tính cô đọng tổng thể; kế hoạch tác nghiệp ngắn hạn, phạm vi hẹp, cụ thể và chi tiết",
+          "Kế hoạch chiến lược không cần người thực hiện, chỉ có kế hoạch tác nghiệp mới cần người thực hiện",
+          "Kế hoạch tác nghiệp chỉ dành cho các giám đốc cấp cao"
+        ],
+        correct: 1,
+        explain: "Slide 102 so sánh: Chiến lược (Thời gian dài, Phạm vi rộng, Mức độ cô đọng tổng thể); Tác nghiệp (Thời gian ngắn, Phạm vi hẹp, Mức độ cụ thể chi tiết)."
+      },
+      {
+        id: 24, chapter: 3, type: "practice", topic: "Mục tiêu SMART",
+        slideRef: "Slide 112",
+        question: "[Tình huống] Mục tiêu nào sau đây của phòng Kinh doanh đáp ứng chuẩn xác nhất nguyên tắc SMART?",
+        options: [
+          "'Cố gắng bán hàng càng nhiều càng tốt trong thời gian tới'",
+          "'Tăng doanh thu sản phẩm sữa hạt thêm 20% tại thị trường miền Bắc trong Quý 3/2026'",
+          "'Phấn đấu trở thành doanh nghiệp vĩ đại nhất thế giới'",
+          "'Nâng cao tinh thần trách nhiệm của toàn thể nhân viên bán hàng'"
+        ],
+        correct: 1,
+        explain: "Slide 112: SMART đòi hỏi mục tiêu phải Cụ thể (Specific), Đo lường được (Measurable: 20%), Khả thi (Achievable), Hiện thực (Realistic) và Giới hạn thời gian (Time-bound: Quý 3/2026)."
+      },
+      {
+        id: 25, chapter: 3, type: "theory", topic: "Công cụ Lập kế hoạch",
+        slideRef: "Slide 121, 122",
+        question: "Trong giai đoạn phân tích bối cảnh để lập kế hoạch, công cụ Ma trận SWOT và Phân tích PEST lần lượt đóng vai trò gì?",
+        options: [
+          "SWOT dùng để phân tích tài chính; PEST dùng để kiểm tra sổ sách kế toán",
+          "SWOT phân tích Điểm mạnh, Điểm yếu (nội bộ) và Cơ hội, Thách thức (bên ngoài); PEST phân tích 4 nhóm nhân tố môi trường vĩ mô (Chính trị, Kinh tế, Xã hội, Công nghệ)",
+          "SWOT chỉ dùng cho quân sự; PEST chỉ dùng cho nông nghiệp",
+          "Cả hai công cụ đều dùng để sa thải nhân viên dư thừa"
+        ],
+        correct: 1,
+        explain: "Slide 121, 122 trình bày chi tiết Ma trận SWOT (Strengths, Weaknesses, Opportunities, Threats) và Mô hình PEST (Political, Economic, Social, Technological)."
+      },
+      {
+        id: 26, chapter: 3, type: "practice", topic: "Công cụ Lập kế hoạch",
+        slideRef: "Slide 116, 130",
+        question: "[Tình huống] Quản lý dự án xây cầu cần theo dõi trực quan trình tự thi công các hạng mục: Khảo sát địa chất (Tháng 1-2), Đúc cọc móng (Tháng 3-5), Đổ dầm cầu (Tháng 6-8) để kịp tiến độ. Công cụ lập kế hoạch tiến độ nào phù hợp và tối ưu nhất?",
+        options: [
+          "Biểu đồ phân tán Scatter",
+          "Biểu đồ tiến độ Gantt (Gantt chart)",
+          "Biểu đồ hình tròn tỷ trọng doanh thu",
+          "Ma trận BCG"
+        ],
+        correct: 1,
+        explain: "Slide 116, 130 minh họa việc sử dụng Biểu đồ Gantt để biểu diễn các đầu việc theo mốc thời gian thực hiện (Time in Months)."
+      },
+      {
+        id: 27, chapter: 3, type: "theory", topic: "Ra quyết định quản lý",
+        slideRef: "Slide 134, 135",
+        question: "Bản chất của 'Ra quyết định quản lý' là gì?",
+        options: [
+          "Một sự phỏng đoán may rủi trong tình trạng không có thông tin",
+          "Sự tuyên bố lựa chọn của chủ thể quản lý về một hoặc một số phương án hành động nhằm hoàn thành mục tiêu của tổ chức trong điều kiện nhất định",
+          "Hành động bắt buộc phải làm theo ý kiến của số đông cấp dưới",
+          "Việc thông qua mọi dự thảo mà không cần so sánh hậu quả"
+        ],
+        correct: 1,
+        explain: "Slide 134, 135: Quyết định quản lý là tuyên bố lựa chọn của chủ thể quản lý về phương án thực hiện công việc cụ thể nhằm hoàn thành mục tiêu của tổ chức."
+      },
+      {
+        id: 28, chapter: 3, type: "practice", topic: "Ra quyết định quản lý",
+        slideRef: "Slide 140",
+        question: "[Tình huống] Đội trưởng Đội Quản lý thị trường ra quyết định: 'Tịch thu tiêu hủy 500 bao thuốc lá lậu và phạt tiền 30 triệu đồng đối với hộ kinh doanh vi phạm'. Theo cách thức tác động tới đối tượng, đây là loại quyết định nào?",
+        options: [
+          "Quyết định hướng dẫn",
+          "Quyết định tùy nghi",
+          "Quyết định cưỡng chế",
+          "Quyết định ngầm"
+        ],
+        correct: 2,
+        explain: "Slide 140 phân loại: Quyết định cưỡng chế (quyết định xử phạt, bắt giam); Quyết định hướng dẫn (thông tư hướng dẫn); Quyết định tùy nghi (khuyến cáo)."
+      },
+      {
+        id: 29, chapter: 3, type: "theory", topic: "Công cụ Ra quyết định",
+        slideRef: "Slide 145, 146",
+        question: "Phương pháp 'Cây quyết định' (Decision Tree) được ứng dụng hiệu quả nhất trong trường hợp nào?",
+        options: [
+          "Khi tình huống hoàn toàn đơn giản không có rủi ro",
+          "Mô tả cấu trúc phân cấp các nhánh điều kiện và kết quả để tìm ra quy tắc lựa chọn phương án tối ưu trong điều kiện bất định/rủi ro",
+          "Dùng để tính tuổi thọ của các loài cây trong công viên",
+          "Dùng để vẽ sơ đồ phả hệ của gia đình giám đốc"
+        ],
+        correct: 1,
+        explain: "Slide 146: Cây quyết định là cấu trúc phân cấp gồm nút gốc, nút nội bộ và nút lá nhằm phân lớp dữ liệu, tính toán xác suất để ra quyết định trong điều kiện bất định."
+      },
+      {
+        id: 30, chapter: 3, type: "practice", topic: "Phân tích Chi phí - Lợi ích",
+        slideRef: "Slide 148",
+        question: "[Tình huống] Thành phố đang xem xét dự án xây hầm chui giảm ùn tắc: Dự toán chi phí xây dựng là 800 tỷ đồng, nhưng giá trị thời gian tiết kiệm cho người dân và giảm tai nạn trong 10 năm được quy đổi ước tính đạt 1.400 tỷ đồng. Ban quản lý đang thực hiện phương pháp nào để quyết định phê duyệt dự án?",
+        options: [
+          "Kỹ thuật Delphi lấy ý kiến chuyên gia bí mật",
+          "Phân tích Chi phí - Lợi ích (Cost-Benefit Analysis - CBA)",
+          "Biểu đồ mạng nhện đánh giá thể chế",
+          "Ma trận phân tích danh mục BCG"
+        ],
+        correct: 1,
+        explain: "Slide 148: Phân tích Chi phí - Lợi ích (CBA) là quá trình có hệ thống tính toán, so sánh chi phí với lợi ích của một dự án chính sách nhằm xác định có nên đầu tư hay không."
+      },
+
+      // ---------- CHƯƠNG 4: CHỨC NĂNG TỔ CHỨC (Slide 150 - 168) ----------
+      {
+        id: 31, chapter: 4, type: "theory", topic: "Khái niệm Chức năng Tổ chức",
+        slideRef: "Slide 150, 151",
+        question: "Chức năng tổ chức trong quản lý được định nghĩa là gì?",
+        options: [
+          "Hoạt động tổ chức các sự kiện liên hoan, kỷ niệm ngày thành lập công ty",
+          "Hoạt động của nhà quản lý gắn với việc thiết kế cơ cấu tổ chức, phân công công việc và giao quyền cho các cá nhân, bộ phận nhằm hoàn thành mục tiêu",
+          "Việc chấm công và phát lương hàng tháng cho cán bộ công nhân viên",
+          "Soạn thảo các bài phát biểu trước công chúng của người đứng đầu"
+        ],
+        correct: 1,
+        explain: "Slide 150: Chức năng tổ chức là những hoạt động của nhà quản lý gắn với việc thiết kế cơ cấu tổ chức, phân công công việc và giao quyền cho các cá nhân và bộ phận."
+      },
+      {
+        id: 32, chapter: 4, type: "practice", topic: "Tầm quản lý & Cấp quản lý",
+        slideRef: "Slide 154",
+        question: "[Tình huống] Công ty May An Phát có 300 công nhân. Giám đốc nhận thấy công việc bị chậm trễ do có tới 6 cấp trung gian (từ Giám đốc -> Phó GĐ -> Quản đốc xưởng -> Đội trưởng -> Tổ trưởng -> Nhóm trưởng -> Công nhân). Giám đốc quyết định mở rộng tầm quản lý của mỗi quản đốc, loại bỏ bớt các cấp trung gian. Cơ cấu tổ chức sau thay đổi sẽ chuyển biến thế nào?",
+        options: [
+          "Số cấp quản lý tăng lên và cơ cấu trở nên dốc hơn",
+          "Số cấp quản lý giảm xuống và cơ cấu tổ chức trở nên 'dẹt' (phẳng) hơn",
+          "Tầm quản lý bị thu hẹp hoàn toàn",
+          "Không có bất kỳ sự thay đổi nào về mặt tổ chức"
+        ],
+        correct: 1,
+        explain: "Slide 154: Tầm quản lý là số cấp dưới trực tiếp. Tầm quản lý và cấp quản lý có quan hệ nghịch biến: mở rộng tầm quản lý sẽ làm giảm bớt số cấp quản lý, tinh gọn bộ máy."
+      },
+      {
+        id: 33, chapter: 4, type: "theory", topic: "Cơ cấu tổ chức",
+        slideRef: "Slide 157",
+        question: "Cơ cấu tổ chức kiểu Ma trận (Matrix structure) có đặc trưng nổi bật nhất là gì?",
+        options: [
+          "Thực hiện chế độ một thủ trưởng nghiêm ngặt tuyệt đối, nhân viên chỉ nhận lệnh từ 1 người duy nhất",
+          "Tồn tại hệ thống chỉ huy kép: người lao động chịu sự điều hành đồng thời của người quản lý bộ phận chức năng và người quản lý dự án/sản phẩm",
+          "Xóa bỏ hoàn toàn hệ thống kiểm tra giám sát",
+          "Chỉ áp dụng cho các cơ sở gia đình buôn bán nhỏ"
+        ],
+        correct: 1,
+        explain: "Slide 157: Cơ cấu ma trận kết hợp cơ cấu chức năng và cơ cấu dự án, tạo sự phối hợp linh hoạt nhưng đòi hỏi nhân viên báo cáo theo 2 tuyến chỉ huy."
+      },
+      {
+        id: 34, chapter: 4, type: "practice", topic: "Cơ cấu tổ chức",
+        slideRef: "Slide 156, 157",
+        question: "[Tình huống] Công ty Sữa Vinamilk phân chia các chi nhánh thành: Chi nhánh miền Bắc, Chi nhánh miền Trung và Chi nhánh miền Nam. Mỗi chi nhánh chịu trách nhiệm toàn bộ hoạt động tiêu thụ trên địa bàn đó. Đây là hình thức thiết kế bộ phận theo tiêu chí nào?",
+        options: [
+          "Phân chia bộ phận theo quy trình công nghệ",
+          "Phân chia bộ phận theo khách hàng",
+          "Phân chia bộ phận theo địa lý (lãnh thổ)",
+          "Phân chia bộ phận theo ngẫu nhiên"
+        ],
+        correct: 2,
+        explain: "Slide 156: Phân chia bộ phận theo địa lý giúp tổ chức thích ứng với đặc điểm thị trường, thói quen tiêu dùng và văn hóa của từng vùng lãnh thổ."
+      },
+      {
+        id: 35, chapter: 4, type: "theory", topic: "Nguyên tắc thiết kế tổ chức",
+        slideRef: "Slide 159",
+        question: "Nguyên tắc 'Từ chức năng để thiết lập cơ cấu bộ máy' nhằm ngăn chặn hiện tượng tiêu cực nào trong thực tiễn?",
+        options: [
+          "Tuyển dụng nhân viên có trình độ cao",
+          "Hiện tượng sinh bộ máy tùy tiện, lập ra phòng ban chỉ để 'bố trí ghế ngồi' cho nhân sự mà không xuất phát từ nhu cầu giải quyết công việc",
+          "Áp dụng công nghệ số hóa vào điều hành văn phòng",
+          "Tiết kiệm chi phí hành chính công"
+        ],
+        correct: 1,
+        explain: "Slide 159: Nguyên tắc 'Từ chức năng để thiết lập cơ cấu bộ máy' đòi hỏi chức năng, nhiệm vụ có trước - bộ máy có sau, tránh cồng kềnh, quan liêu."
+      },
+      {
+        id: 36, chapter: 4, type: "practice", topic: "Phân công công việc",
+        slideRef: "Slide 161, 163",
+        question: "[Tình huống] Trưởng phòng Marketing muốn phân công công việc chạy chiến dịch quảng cáo Facebook cho nhân viên mới. Theo quy trình phân công khoa học, bước đầu tiên trưởng phòng phải thực hiện là gì?",
+        options: [
+          "Bắt nhân viên cam kết bồi thường nếu chiến dịch thất bại",
+          "Phân tích công việc, làm rõ bản mô tả công việc và các mục tiêu cụ thể cần đạt được",
+          "Giao mật khẩu tài khoản ngân hàng của công ty ngay lập tức",
+          "Tổ chức liên hoan khen thưởng trước khi làm"
+        ],
+        correct: 1,
+        explain: "Slide 163 quy định Quy trình phân công: Bước 1 là Phân tích công việc, mô tả công việc; Bước 2: Xác định công việc và mục tiêu cần phân công."
+      },
+      {
+        id: 37, chapter: 4, type: "theory", topic: "Giao quyền (Ủy quyền)",
+        slideRef: "Slide 165, 167",
+        question: "Khái niệm 'Giao quyền' (Ủy quyền) trong quản lý được định nghĩa là:",
+        options: [
+          "Việc nhà quản lý trút bỏ toàn bộ trách nhiệm khi đơn vị làm ăn thua lỗ",
+          "Việc nhà quản lý trao việc sử dụng quyền lực cho cấp dưới để họ hoàn thành công việc được phân công một cách tốt nhất",
+          "Hành vi chiếm đoạt quyền điều hành của ban giám đốc",
+          "Chuyển nhượng quyền sở hữu tài sản doanh nghiệp"
+        ],
+        correct: 1,
+        explain: "Slide 165: Giao quyền là việc nhà quản lý trao việc sử dụng quyền lực cho cấp dưới để họ có thể hoàn thành công việc được phân công một cách tốt nhất."
+      },
+      {
+        id: 38, chapter: 4, type: "practice", topic: "Nguyên tắc giao quyền",
+        slideRef: "Slide 167",
+        question: "[Tình huống] Giám đốc ủy quyền cho Phó Giám đốc phụ trách đầu tư ký hợp đồng mua lô thiết bị y tế. Phó Giám đốc chọn nhà cung cấp giá rẻ kém chất lượng dẫn đến máy hỏng. Khi Hội đồng quản trị chất vấn, Giám đốc trả lời: 'Tôi đã giao toàn quyền cho anh Phó GĐ nên tôi vô can'. Phát biểu của Giám đốc vi phạm nguyên tắc quản lý nào?",
+        options: [
+          "Nguyên tắc tuân thủ quy trình công nghệ",
+          "Người giao quyền vẫn phải chịu trách nhiệm chung cao nhất trước cấp trên về kết quả của quyền lực đã ủy thác",
+          "Nguyên tắc bảo mật thông tin nội bộ",
+          "Nguyên tắc phân công lao động chuyên môn"
+        ],
+        correct: 1,
+        explain: "Slide 167: Giao quyền chỉ là ủy thác việc thực hiện và thẩm quyền sử dụng; người đứng đầu vẫn phải chịu trách nhiệm cao nhất về kết quả cuối cùng trước tổ chức."
+      },
+      {
+        id: 39, chapter: 4, type: "theory", topic: "Nguyên tắc giao quyền",
+        slideRef: "Slide 167",
+        question: "Theo nguyên tắc giao quyền chuẩn trong quản trị học, nhà quản lý chỉ nên giao quyền trực tiếp cho đối tượng nào?",
+        options: [
+          "Cấp dưới trực tiếp",
+          "Vượt cấp xuống nhân viên thử việc tầng thấp nhất",
+          "Đối tác kinh doanh bên ngoài không có quan hệ thẩm quyền",
+          "Bất kỳ ai có quen biết thân tình"
+        ],
+        correct: 0,
+        explain: "Slide 167 nêu rõ nguyên tắc giao quyền: Chỉ giao quyền cho cấp dưới trực tiếp; Giao quyền theo cấp bậc và theo phạm vi chức năng, nhiệm vụ."
+      },
+      {
+        id: 40, chapter: 4, type: "practice", topic: "Lợi ích của giao quyền",
+        slideRef: "Slide 162, 166",
+        question: "[Tình huống] Một giám đốc doanh nghiệp vừa và nhỏ luôn than phiền phải làm việc 14 tiếng mỗi ngày, từ việc duyệt mua văn phòng phẩm đến sửa lỗi máy in, không có thời gian gặp đối tác lớn. Lời khuyên quản lý thiết thực và đúng đắn nhất dành cho vị giám đốc này là gì?",
+        options: [
+          "Nên ngủ tại công ty để làm việc 18 tiếng mỗi ngày",
+          "Thực hiện giao quyền và phân công lao động hợp lý, trao quyền quyết định các việc sự vụ tác nghiệp cho cấp dưới để tập trung vào mục tiêu chiến lược",
+          "Đóng cửa công ty để nghỉ ngơi",
+          "Thuê thêm một trợ lý cá nhân để làm thay chức năng giám đốc"
+        ],
+        correct: 1,
+        explain: "Slide 162, 166: Giao quyền và phân công hợp lý giúp giảm tải công việc cho nhà quản lý, để họ tập trung vào những nhiệm vụ chiến lược quan trọng hơn."
+      }
+    ];
+
+    // ==========================================
+    // APP STATE
+    // ==========================================
+    let activeQuestions = [...MASTER_QUESTIONS];
+    let currentIndex = 0;
+    let userAnswers = {}; // { qId: selectedOptionIndex }
+    let bookmarks = new Set();
+    let currentMode = 'study'; // 'study' | 'exam'
+    let currentFilter = 'all';
+    let isExamSubmitted = false;
+    let timerSeconds = 45 * 60;
+    let timerInterval = null;
+
+    const STORAGE_KEY = 'KHQL_C1_C4_QUIZ_PROGRESS_V2';
+
+    // ==========================================
+    // LOCAL STORAGE
+    // ==========================================
+    function saveState() {
+      const state = {
+        userAnswers,
+        bookmarks: Array.from(bookmarks),
+        currentMode,
+        isExamSubmitted,
+        timerSeconds
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s.userAnswers) userAnswers = s.userAnswers;
+          if (s.bookmarks) bookmarks = new Set(s.bookmarks);
+          if (s.currentMode) currentMode = s.currentMode;
+          if (s.isExamSubmitted !== undefined) isExamSubmitted = s.isExamSubmitted;
+          if (s.timerSeconds !== undefined) timerSeconds = s.timerSeconds;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // ==========================================
+    // INIT & FILTER
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      setMode(currentMode, false);
+      applyFilter();
+      lucide.createIcons();
+    });
+
+    function onChapterChange() {
+      currentFilter = document.getElementById('chapterFilter').value;
+      applyFilter();
+    }
+
+    function applyFilter() {
+      if (currentFilter === 'all') {
+        activeQuestions = [...MASTER_QUESTIONS];
+      } else if (currentFilter === 'theory') {
+        activeQuestions = MASTER_QUESTIONS.filter(q => q.type === 'theory');
+      } else if (currentFilter === 'practice') {
+        activeQuestions = MASTER_QUESTIONS.filter(q => q.type === 'practice');
+      } else if (currentFilter === 'bookmarked') {
+        activeQuestions = MASTER_QUESTIONS.filter(q => bookmarks.has(q.id));
+        if (activeQuestions.length === 0) {
+          alert('Chưa có câu hỏi nào được đánh dấu ⭐!');
+          document.getElementById('chapterFilter').value = 'all';
+          currentFilter = 'all';
+          activeQuestions = [...MASTER_QUESTIONS];
+        }
+      } else {
+        const cNum = parseInt(currentFilter);
+        activeQuestions = MASTER_QUESTIONS.filter(q => q.chapter === cNum);
+      }
+
+      currentIndex = 0;
+      renderMatrix();
+      renderQuestion();
+      updateStats();
+    }
+
+    // ==========================================
+    // SHUFFLE (PHA TRỘN) & RESET
+    // ==========================================
+    function shuffleQuestions() {
+      if (confirm('Bạn có muốn xáo trộn ngẫu nhiên thứ tự các câu hỏi và các đáp án không?')) {
+        // Fisher-Yates shuffle
+        for (let i = activeQuestions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [activeQuestions[i], activeQuestions[j]] = [activeQuestions[j], activeQuestions[i]];
+        }
+        currentIndex = 0;
+        renderMatrix();
+        renderQuestion();
+        updateStats();
+        confetti({ particleCount: 30, spread: 60 });
+      }
+    }
+
+    function resetCurrentProgress() {
+      if (confirm('Làm lại từ đầu: Toàn bộ câu trả lời đã chọn sẽ được xóa trắng?')) {
+        userAnswers = {};
+        isExamSubmitted = false;
+        timerSeconds = 45 * 60;
+        saveState();
+        renderMatrix();
+        renderQuestion();
+        updateStats();
+      }
+    }
+
+    // ==========================================
+    // QUESTION RENDERING
+    // ==========================================
+    function renderQuestion() {
+      if (activeQuestions.length === 0) return;
+
+      const q = activeQuestions[currentIndex];
+      const selected = userAnswers[q.id];
+      const letters = ['A', 'B', 'C', 'D'];
+
+      // Badges
+      document.getElementById('badgeQuestionNumber').textContent = `Câu ${q.id} (Hiện thị: ${currentIndex + 1}/${activeQuestions.length})`;
+      document.getElementById('badgeChapter').textContent = `Chương ${q.chapter}`;
+      document.getElementById('badgeType').textContent = q.type === 'theory' ? 'Lý thuyết (50%)' : 'Thực tế (50%)';
+      document.getElementById('badgeType').className = q.type === 'theory' 
+        ? 'px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200'
+        : 'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+      document.getElementById('badgeTopic').textContent = q.topic;
+
+      // Bookmark button
+      const iconBm = document.getElementById('iconBookmark');
+      if (bookmarks.has(q.id)) {
+        iconBm.classList.add('fill-amber-400', 'text-amber-500');
+        iconBm.classList.remove('text-slate-400');
+      } else {
+        iconBm.classList.remove('fill-amber-400', 'text-amber-500');
+        iconBm.classList.add('text-slate-400');
+      }
+
+      document.getElementById('questionText').textContent = q.question;
+
+      // Options
+      const optContainer = document.getElementById('optionsContainer');
+      optContainer.innerHTML = '';
+
+      const hasAnswered = selected !== undefined;
+      const showFeedback = (currentMode === 'study' && hasAnswered) || isExamSubmitted;
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.onclick = () => selectOption(idx);
+        btn.className = 'w-full text-left p-4 rounded-2xl border transition-all flex items-start space-x-3.5 relative text-sm sm:text-base group ';
+
+        let badgeClass = 'w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors ';
+        const isSelected = (selected === idx);
+        const isCorrect = (q.correct === idx);
+
+        if (!showFeedback) {
+          if (isSelected) {
+            btn.className += 'border-brand-500 bg-brand-50/70 text-brand-900 shadow-sm custom-ring font-medium';
+            badgeClass += 'bg-brand-600 text-white';
+          } else {
+            btn.className += 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50 text-slate-700';
+            badgeClass += 'bg-slate-100 text-slate-600 group-hover:bg-brand-100 group-hover:text-brand-700';
+          }
+        } else {
+          if (isCorrect) {
+            btn.className += 'border-emerald-500 bg-emerald-50 text-emerald-950 font-medium shadow-sm';
+            badgeClass += 'bg-emerald-600 text-white';
+          } else if (isSelected && !isCorrect) {
+            btn.className += 'border-rose-400 bg-rose-50 text-rose-950 font-medium';
+            badgeClass += 'bg-rose-600 text-white';
+          } else {
+            btn.className += 'border-slate-200 bg-white text-slate-400 opacity-60';
+            badgeClass += 'bg-slate-100 text-slate-400';
+          }
+        }
+
+        btn.innerHTML = `
+          <span class="${badgeClass}">${letters[idx]}</span>
+          <span class="flex-1 pt-0.5 leading-relaxed">${optText}</span>
+          ${showFeedback && isCorrect ? `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0"></i>` : ''}
+          ${showFeedback && isSelected && !isCorrect ? `<i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0"></i>` : ''}
+        `;
+        optContainer.appendChild(btn);
+      });
+
+      // Explanation
+      const expBox = document.getElementById('explanationBox');
+      const expTxt = document.getElementById('explanationText');
+      if (showFeedback) {
+        expBox.classList.remove('hidden');
+        expTxt.innerHTML = `<span class="inline-block font-semibold text-brand-700 mr-1">[${q.slideRef}]:</span> ${q.explain}`;
+      } else {
+        expBox.classList.add('hidden');
+      }
+
+      document.getElementById('btnPrev').disabled = (currentIndex === 0);
+      document.getElementById('btnNext').disabled = (currentIndex === activeQuestions.length - 1);
+
+      lucide.createIcons();
+      updateMatrixItem(q.id);
+    }
+
+    // ==========================================
+    // INTERACTION HANDLERS
+    // ==========================================
+    function selectOption(optIndex) {
+      if (isExamSubmitted && currentMode === 'exam') return;
+
+      const q = activeQuestions[currentIndex];
+      userAnswers[q.id] = optIndex;
+      saveState();
+      renderQuestion();
+      updateMatrixItem(q.id);
+      updateStats();
+    }
+
+    function clearCurrentAnswer() {
+      const q = activeQuestions[currentIndex];
+      if (userAnswers[q.id] !== undefined) {
+        delete userAnswers[q.id];
+        saveState();
+        renderQuestion();
+        updateMatrixItem(q.id);
+        updateStats();
+      }
+    }
+
+    function navigateQuestion(dir) {
+      const nIdx = currentIndex + dir;
+      if (nIdx >= 0 && nIdx < activeQuestions.length) {
+        currentIndex = nIdx;
+        renderQuestion();
+      }
+    }
+
+    function toggleBookmarkCurrent() {
+      const q = activeQuestions[currentIndex];
+      if (bookmarks.has(q.id)) {
+        bookmarks.delete(q.id);
+      } else {
+        bookmarks.add(q.id);
+      }
+      saveState();
+      renderQuestion();
+      updateMatrixItem(q.id);
+    }
+
+    function jumpToQuestionById(qId) {
+      const fIdx = activeQuestions.findIndex(q => q.id === qId);
+      if (fIdx !== -1) {
+        currentIndex = fIdx;
+        renderQuestion();
+      }
+    }
+
+    // ==========================================
+    // MATRIX & STATS
+    // ==========================================
+    function renderMatrix() {
+      const matrix = document.getElementById('questionMatrix');
+      matrix.innerHTML = '';
+      document.getElementById('matrixCount').textContent = `${activeQuestions.length} câu`;
+
+      activeQuestions.forEach(q => {
+        const btn = document.createElement('button');
+        btn.id = `matrix-btn-${q.id}`;
+        btn.onclick = () => jumpToQuestionById(q.id);
+        btn.className = getMatrixClass(q.id);
+        btn.textContent = q.id;
+        matrix.appendChild(btn);
+      });
+    }
+
+    function getMatrixClass(qId) {
+      const isAns = (userAnswers[qId] !== undefined);
+      const isCur = (activeQuestions[currentIndex] && activeQuestions[currentIndex].id === qId);
+      const isBm = bookmarks.has(qId);
+
+      let cls = "h-9 w-full rounded-xl text-xs font-semibold flex items-center justify-center transition-all relative ";
+
+      if (isCur) cls += "ring-2 ring-brand-500 font-bold ";
+
+      if (isBm) {
+        cls += "after:content-[''] after:absolute after:top-1 after:right-1 after:w-2 after:h-2 after:bg-amber-400 after:rounded-full ";
+      }
+
+      if (isExamSubmitted || currentMode === 'study') {
+        if (isAns) {
+          const q = MASTER_QUESTIONS.find(item => item.id === qId);
+          if (userAnswers[qId] === q.correct) {
+            cls += "bg-emerald-100 text-emerald-800 border border-emerald-300 ";
+          } else {
+            cls += "bg-rose-100 text-rose-800 border border-rose-300 ";
+          }
+        } else {
+          cls += "bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 ";
+        }
+      } else {
+        if (isAns) {
+          cls += "bg-brand-600 text-white shadow-sm ";
+        } else {
+          cls += "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 ";
+        }
+      }
+      return cls;
+    }
+
+    function updateMatrixItem(qId) {
+      const btn = document.getElementById(`matrix-btn-${qId}`);
+      if (btn) btn.className = getMatrixClass(qId);
+    }
+
+    function updateStats() {
+      const ansCount = Object.keys(userAnswers).length;
+      document.getElementById('answeredCount').textContent = ansCount;
+      document.getElementById('totalVisibleCount').textContent = MASTER_QUESTIONS.length;
+      const pct = Math.round((ansCount / MASTER_QUESTIONS.length) * 100);
+      document.getElementById('progressBar').style.width = `${pct}%`;
+    }
+
+    // ==========================================
+    // EXAM & TIMER MODE
+    // ==========================================
+    function setMode(mode, reset = true) {
+      currentMode = mode;
+      const bStudy = document.getElementById('btnModeStudy');
+      const bExam = document.getElementById('btnModeExam');
+      const timerBox = document.getElementById('timerContainer');
+
+      if (mode === 'study') {
+        bStudy.className = 'px-2.5 py-1.5 rounded-lg bg-white shadow-sm text-brand-700 font-bold transition flex items-center space-x-1';
+        bExam.className = 'px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition flex items-center space-x-1';
+        timerBox.classList.add('hidden');
+        clearInterval(timerInterval);
+      } else {
+        bExam.className = 'px-2.5 py-1.5 rounded-lg bg-white shadow-sm text-brand-700 font-bold transition flex items-center space-x-1';
+        bStudy.className = 'px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition flex items-center space-x-1';
+        timerBox.classList.remove('hidden');
+        if (!isExamSubmitted) startTimer();
+      }
+      saveState();
+      renderQuestion();
+      renderMatrix();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      renderTimer();
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          renderTimer();
+          if (timerSeconds % 10 === 0) saveState();
+        } else {
+          clearInterval(timerInterval);
+          alert('Hết giờ làm bài thi thử!');
+          submitExam();
+        }
+      }, 1000);
+    }
+
+    function renderTimer() {
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function confirmSubmitExam() {
+      const done = Object.keys(userAnswers).length;
+      const total = MASTER_QUESTIONS.length;
+      if (confirm(`Bạn đã hoàn thành ${done}/${total} câu hỏi. Bạn có chắc muốn nộp bài để xem điểm số và phân tích năng lực?`)) {
+        submitExam();
+      }
+    }
+
+    function submitExam() {
+      isExamSubmitted = true;
+      clearInterval(timerInterval);
+      saveState();
+
+      let correct = 0;
+      MASTER_QUESTIONS.forEach(q => {
+        if (userAnswers[q.id] === q.correct) correct++;
+      });
+
+      const score10 = (correct / MASTER_QUESTIONS.length * 10).toFixed(1);
+      const acc = Math.round((correct / MASTER_QUESTIONS.length) * 100);
+
+      document.getElementById('modalScore10').textContent = score10;
+      document.getElementById('modalCorrectCount').textContent = `${correct}/${MASTER_QUESTIONS.length}`;
+      document.getElementById('modalAccuracy').textContent = `${acc}%`;
+
+      const msg = document.getElementById('modalEvaluationMessage');
+      if (acc >= 80) {
+        msg.innerHTML = "🎉 <b>Kết quả Xuất Sắc!</b> Bạn nắm rất chắc lý luận và tình huống thực tế của cả 4 chương!";
+        confetti({ particleCount: 100, spread: 70 });
+      } else if (acc >= 60) {
+        msg.innerHTML = "👍 <b>Đạt kết quả Khá!</b> Bạn hiểu kiến thức chung, hãy xem báo cáo Điểm Mạnh/Yếu để cải thiện thêm.";
+      } else {
+        msg.innerHTML = "⚠️ <b>Cần bổ sung kiến thức!</b> Bạn hãy xem phần phân tích điểm yếu để biết slide cần đọc lại.";
+      }
+
+      document.getElementById('resultModal').classList.remove('hidden');
+      renderQuestion();
+      renderMatrix();
+    }
+
+    function closeResultModal() {
+      document.getElementById('resultModal').classList.add('hidden');
+    }
+
+    // ==========================================
+    // HỆ THỐNG ĐÁNH GIÁ ĐIỂM MẠNH & ĐIỂM YẾU
+    // ==========================================
+    function openAnalyticsModal() {
+      const container = document.getElementById('analyticsContent');
+      container.innerHTML = '';
+
+      // Thống kê theo chủ đề
+      const topicMap = {};
+
+      MASTER_QUESTIONS.forEach(q => {
+        if (!topicMap[q.topic]) {
+          topicMap[q.topic] = {
+            chapter: q.chapter,
+            total: 0,
+            correct: 0,
+            slideRef: q.slideRef
+          };
+        }
+        topicMap[q.topic].total++;
+        if (userAnswers[q.id] === q.correct) {
+          topicMap[q.topic].correct++;
+        }
+      });
+
+      // Tạo giao diện đánh giá
+      const topics = Object.keys(topicMap);
+      topics.forEach(tName => {
+        const item = topicMap[tName];
+        const pct = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+        
+        let statusBadge = '';
+        let barColor = 'bg-brand-600';
+        let recommendation = '';
+
+        if (pct >= 80) {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">ĐIỂM MẠNH (Vững chắc)</span>';
+          barColor = 'bg-emerald-500';
+          recommendation = 'Tiếp tục duy trì và nâng cao kiến thức liên hệ thực tiễn.';
+        } else if (pct >= 50) {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800">TRUNG BÌNH (Cần ôn thêm)</span>';
+          barColor = 'bg-amber-500';
+          recommendation = `Đọc kỹ lại phần bài giảng tương ứng tại <b>${item.slideRef}</b> để nắm chắc khái niệm.`;
+        } else {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800">ĐIỂM YẾU (Cần khắc phục ngay)</span>';
+          barColor = 'bg-rose-500';
+          recommendation = `⚠️ Lỗ hổng kiến thức! Bắt buộc ôn lại slide <b>${item.slideRef}</b> trước khi đi thi!`;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-2';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-brand-600 uppercase">Chương ${item.chapter}</span>
+              <h4 class="text-sm font-bold text-slate-800">${tName}</h4>
+            </div>
+            ${statusBadge}
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>Đúng: ${item.correct}/${item.total} câu</span>
+            <span class="font-bold text-slate-700">${pct}%</span>
+          </div>
+          <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div class="${barColor} h-2 rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+          </div>
+          <p class="text-xs text-slate-600 pt-1 border-t border-slate-100">
+            💡 <b>Khuyến nghị cải thiện:</b> ${recommendation}
+          </p>
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById('analyticsModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeAnalyticsModal() {
+      document.getElementById('analyticsModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
